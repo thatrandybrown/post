@@ -1,0 +1,12 @@
+{
+  "name": "post",
+  "version": "0.1.0",
+  "description": "a service for blog posts",
+  "main": "index.js",
+  "scripts": {},
+  "author": "randy brown",
+  "license": "MIT",
+  "dependencies": {
+    "uuidv4": "^6.0.2"
+  }
+}
