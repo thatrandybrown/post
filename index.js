@@ -15,9 +15,10 @@ export default ({config, boundary, logger, messageHandler, entityMapper}) => {
                      * probably good to do some data checking on the body
                      * before sending it on
                     **/
+                    const post = {id: uuid()}
                     messageHandler.write(config.messaging.queue,
-                            JSON.stringify({id: uuid(), ...req.body}))
-                    return res.status(202).send({id})
+                            JSON.stringify({...post, ...req.body}))
+                    return res.status(202).send(post)
                 }
             ]}
         ]
