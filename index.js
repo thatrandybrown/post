@@ -1,7 +1,7 @@
 import uuid from 'uuidv4';
 
 export default ({config, boundary, logger, messageHandler, entityMapper}) => {
-    const {read, write} = entityMapper.define('post', []);
+    const {read} = entityMapper.define('post', [id, text]);
 
     return [{
         resource: "/",
