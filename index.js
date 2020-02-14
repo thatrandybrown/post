@@ -1,13 +1,15 @@
 import uuid from 'uuidv4';
+import {createClient} from 'redis';
 
 export default ({config, boundary, logger, messageHandler, entityMapper}) => {
-    const {read} = entityMapper.define('post', [id, text]);
+    const client = createClient();
 
     return [{
         resource: "/",
         behaviors: [
             {endpoint: "/", method: "get", behavior: [
-                (req, res, next) => read().then(data => res.send(data))
+                (req, res, next) =>
+                    client.hgetall("hosts", (err,data) => res.send(data))
             ]},
             {endpoint: "/", method: "post", behavior: [
                 (req, res, next) => {
