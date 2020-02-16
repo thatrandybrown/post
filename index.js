@@ -1,4 +1,4 @@
-import uuid from 'uuidv4';
+import {uuid} from 'uuidv4';
 import {createClient} from 'redis';
 
 export default ({config, boundary, logger, messageHandler, entityMapper}) => {
