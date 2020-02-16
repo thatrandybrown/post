@@ -1,4 +1,4 @@
-FROM dutchoven/express
+FROM dutchoven/express AS build
 
 COPY package*.json /app/
 RUN npm ci
