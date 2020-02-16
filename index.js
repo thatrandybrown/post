@@ -9,7 +9,10 @@ export default ({config, boundary, logger, messageHandler, entityMapper}) => {
         behaviors: [
             {endpoint: "/", method: "get", behavior: [
                 (req, res, next) =>
-                    client.hgetall("hosts", (err,data) => res.send(data))
+                    client.hgetall(
+                        "hosts",
+                        (err,data) => err ? res.send(data) : next(err)
+                    )
             ]},
             {endpoint: "/", method: "post", behavior: [
                 (req, res, next) => {
