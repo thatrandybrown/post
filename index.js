@@ -3,8 +3,8 @@ import {createClient} from 'redis';
 import util from 'util';
 const {promisify} = util;
 
-export default ({config, boundary, logger, messageHandler, entityMapper}) => {
-    const client = createClient("redis://redis:6379");
+export default ({config, messageHandler}) => {
+    const client = createClient(config.cache.url);
     const hgetall = promisify(client.hgetall).bind(client);
 
     return [{
@@ -12,7 +12,7 @@ export default ({config, boundary, logger, messageHandler, entityMapper}) => {
         behaviors: [
             {endpoint: "/", method: "get", behavior: [
                 async (req, res, next) => {
-                    const data = await hgetall("posts");
+                    const data = await hgetall(config.cache.hash);
                     return res.send(data);
                 }
             ]},
@@ -22,10 +22,10 @@ export default ({config, boundary, logger, messageHandler, entityMapper}) => {
                      * probably good to do some data checking on the body
                      * before sending it on
                     **/
-                    const post = {id: uuid()}
+                    const id = uuid()
                     messageHandler.write(config.messaging.queue,
-                            JSON.stringify({...post, ...req.body}))
-                    return res.status(202).send(post)
+                            JSON.stringify({id, ...req.body}))
+                    return res.status(202).send({id})
                 }
             ]}
         ]
