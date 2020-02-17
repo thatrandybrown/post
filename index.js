@@ -6,6 +6,20 @@ const {promisify} = util;
 export default ({config, messageHandler}) => {
     const client = createClient(config.cache.url);
     const hgetall = promisify(client.hgetall).bind(client);
+    const hset = promisify(client.hset).bind(client);
+
+    /**
+     * the message recipient will just push back a message
+     * the service will process it and push it to redis
+     *
+     * perhaps the service should also do a health check on redis
+     * and send a message if redis fails / reboots to rehydrate
+     *
+     * or should it re-hydrate on service launch
+    */
+    messageHandler.read(config.messaging.rcvQueue, msg => {
+        hset(config.cache.hash, msg.id, msg);
+    });
 
     return [{
         resource: "/",
@@ -23,7 +37,7 @@ export default ({config, messageHandler}) => {
                      * before sending it on
                     **/
                     const id = uuid()
-                    messageHandler.write(config.messaging.queue,
+                    messageHandler.write(config.messaging.sendQueue,
                             JSON.stringify({id, ...req.body}))
                     return res.status(202).send({id})
                 }
