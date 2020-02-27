@@ -37,8 +37,15 @@ export default ({config, messageHandler}) => {
                      * before sending it on
                     **/
                     const id = uuid()
-                    messageHandler.write(config.messaging.sendQueue,
-                            JSON.stringify({id, ...req.body}))
+                    const timestamp = Date.now()
+                    messageHandler.write(
+                        config.messaging.sendQueue,
+                        JSON.stringify({
+                            id,
+                            timestamp,
+                            ...req.body
+                        })
+                    )
                     return res.status(202).send({id})
                 }
             ]}
