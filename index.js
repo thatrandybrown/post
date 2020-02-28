@@ -36,17 +36,28 @@ export default ({config, messageHandler}) => {
                      * probably good to do some data checking on the body
                      * before sending it on
                     **/
-                    const id = uuid()
+
+                    /**
+                     * in this case, if req.body has an id, it will overwrite
+                     * the generated id.
+                     *
+                     * If a tree or graph structure needs to be implied by the
+                     * versions, then it will need to be somewhere other than
+                     * id, which will always be what is provided by the request
+                    **/
+                    const id = req.body.id || uuid()
+                    const uid = uuid()
                     const timestamp = Date.now()
                     messageHandler.write(
                         config.messaging.sendQueue,
                         JSON.stringify({
                             id,
+                            uid,
                             timestamp,
                             ...req.body
                         })
                     )
-                    return res.status(202).send({id})
+                    return res.status(202).send({id, uid})
                 }
             ]}
         ]
