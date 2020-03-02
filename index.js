@@ -18,7 +18,8 @@ export default ({config, messageHandler}) => {
      * or should it re-hydrate on service launch
     */
     messageHandler.read(config.messaging.rcvQueue, msg => {
-        hset(config.cache.hash, msg.id, msg);
+        const message = JSON.parse(msg.content.toString())
+        hset(config.cache.hash, message.id, JSON.stringify(message));
     });
 
     return [{
