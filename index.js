@@ -28,7 +28,12 @@ export default ({config, messageHandler}) => {
             {endpoint: "/", method: "get", behavior: [
                 async (req, res, next) => {
                     const data = await hgetall(config.cache.hash);
-                    return res.send(data);
+                    return res.send(
+                        Object.keys(data).reduce(
+                            (acc, item) => [...acc, JSON.parse(data[item])],
+                            []
+                        )
+                    )
                 }
             ]},
             {endpoint: "/", method: "post", behavior: [
