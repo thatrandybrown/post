@@ -54,6 +54,15 @@ export default ({config, messageHandler}) => {
                     const id = req.body.id || uuid()
                     const uid = uuid()
                     const timestamp = Date.now()
+                    const authHeader = req.get("Authorization")
+
+                    if(!authHeader) return next({status: 401, message: "No authorization header"});
+                    authToken = authHeader.split(" ");
+                    if(authToken[0] !== "Bearer")
+                      return next({status: 401, message: "Bearer token not present"});
+                    const apiKey = authToken[1];
+
+                    if(apiKey !== config.api_key) return next({status: 403});
                     messageHandler.write(
                         config.messaging.sendQueue,
                         JSON.stringify({
