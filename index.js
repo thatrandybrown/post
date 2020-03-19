@@ -57,7 +57,7 @@ export default ({config, messageHandler}) => {
                     const authHeader = req.get("Authorization")
 
                     if(!authHeader) return next({status: 401, message: "No authorization header"});
-                    authToken = authHeader.split(" ");
+                    const authToken = authHeader.split(" ");
                     if(authToken[0] !== "Bearer")
                       return next({status: 401, message: "Bearer token not present"});
                     const apiKey = authToken[1];
