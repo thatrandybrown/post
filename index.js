@@ -27,7 +27,17 @@ export default ({config, messageHandler}) => {
         behaviors: [
             {endpoint: "/", method: "get", behavior: [
                 async (req, res, next) => {
-                    const data = await hgetall(config.cache.hash);
+                    const authHeader = req.get("Authorization")
+
+                    if(!authHeader) return next({status: 401, message: "No authorization header"});
+                    const authToken = authHeader.split(" ");
+                    if(authToken[0] !== "Bearer")
+                      return next({status: 401, message: "Bearer token not present"});
+                    const apiKey = authToken[1];
+
+                    if(apiKey !== config.read_key) return next({status: 403});
+
+                    const data = await hgetall(config.cache.hash) || {};
                     return res.send(
                         Object.keys(data).reduce(
                             (acc, item) => [...acc, JSON.parse(data[item])],
@@ -62,7 +72,7 @@ export default ({config, messageHandler}) => {
                       return next({status: 401, message: "Bearer token not present"});
                     const apiKey = authToken[1];
 
-                    if(apiKey !== config.api_key) return next({status: 403});
+                    if(apiKey !== config.write_key) return next({status: 403});
                     messageHandler.write(
                         config.messaging.sendQueue,
                         JSON.stringify({
