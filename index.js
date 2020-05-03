@@ -37,7 +37,7 @@ export default ({config, messageHandler}) => {
                 }
             ]},
             {endpoint: "/:postId", method: "get", behavior: [
-                (req, res, next) => {
+                async (req, res, next) => {
                     const post = await hget(config.cache.hash, req.params.postId);
                     if(!post) return next({status: 404});
                     return res.send(JSON.parse(post));
