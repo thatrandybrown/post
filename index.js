@@ -5,8 +5,10 @@ const {promisify} = util;
 
 export default ({config, messageHandler}) => {
     const client = createClient(config.cache.url);
+
     const hgetall = promisify(client.hgetall).bind(client);
     const hset = promisify(client.hset).bind(client);
+    const hget = promisify(client.hget).bind(client);
 
     /**
      * the message recipient will just push back a message
